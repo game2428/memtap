@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#007AFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MemTap</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        :root {
+            --primary: #007AFF;
+            --primary-light: #5AC8FA;
+            --primary-dark: #0056CC;
+            --secondary: #5856D6;
+            --accent: #34C759;
+            --energy: #32D74B;
+            --energy-low: #FF9500;
+            --energy-empty: #FF3B30;
+            --text: #FFFFFF;
+            --text-light: #8E8E93;
+            --background: #000000;
+            --card-bg: rgba(28, 28, 30, 0.8);
+            --card-bg-light: rgba(44, 44, 46, 0.8);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-lg: 14px;
+            --glow: 0 0 15px rgba(0, 122, 255, 0.5);
+        }
+
+        body {
+            background: linear-gradient(135deg, #000000 0%, #1C1C1E 50%, #2C2C2E 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text);
+            overflow: hidden;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            position: relative;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(90, 200, 250, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000%) translateX(1000%) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 6px;
+            max-width: 100%;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            margin-bottom: 6px;
+            position: relative;
+            min-height: 36px;
+        }
+
+        .logo {
+            height: 26px;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .logo img {
+            height: 100%;
+            object-fit: contain;
+            max-width: 100%;
+        }
+
+        .balance-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .balance {
+            background: rgba(120, 120, 128, 0.2);
+            color: var(--text);
+            padding: 5px 8px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 50px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            font-size: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .energy-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            box-shadow: var(--shadow);
+            display: none;
+            width: 180px;
+            z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .energy-container.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .energy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .energy-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .energy-icon {
+            font-size: 12px;
+        }
+
+        .energy-value-large {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--energy);
+        }
+
+        .energy-progress {
+            height: 4px;
+            background: rgba(120, 120, 128, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 6px;
+            position: relative;
+        }
+
+        .energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--energy), #4CD964);
+            width: 75%;
+            border-radius: 2px;
+            transition: width 0.5s ease, background 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .energy-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .energy-info {
+            font-size: 10px;
+            color: var(--text-light);
+            text-align: center;
+            background: rgba(120, 120, 128, 0.2);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 6px;
+            box-shadow: none;
+            overflow: hidden;
+            border: none;
+            position: relative;
+        }
+
+        .section {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            padding: 8px;
+            overflow-y: auto;
+        }
+
+        .section.active {
+            display: flex;
+        }
+
+        .coin-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6px;
+            position: relative;
+        }
+
+        .coin {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: url('https://i.ibb.co/CKqNQTjf/IMG-6920.png') center/cover no-repeat;
+            box-shadow: 
+                0 0 0 4px rgba(255, 215, 0, 0.15),
+                0 4px 15px rgba(0, 0, 0, 0.4),
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            touch-action: manipulation;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .tap-effect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%);
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .coin-value {
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .energy-cost {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: var(--text);
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 10px;
+            font-size: 12px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .upgrade-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(88, 86, 214, 0.5);
+        }
+
+        .upgrade-btn:active {
+            transform: scale(0.95);
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 8px;
+            position: relative;
+            padding-top: 4px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 18px;
+            color: var(--text);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 8px rgba(52, 199, 89, 0.4);
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .user-level {
+            color: var(--text-light);
+            font-size: 11px;
+            background: rgba(120, 120, 128, 0.2);
+            padding: 4px 8px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 4px;
+            font-weight: 600;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .language-btn {
+            background: rgba(120, 120, 128, 0.2);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 6px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.3s ease;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            margin-top: 4px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card {
+            background: rgba(120, 120, 128, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: var(--text-light);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .section-title i {
+            color: var(--accent);
+        }
+
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .achievement {
+            background: rgba(120, 120, 128, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 8px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-height: 60px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .achievement.locked {
+            opacity: 0.5;
+            filter: grayscale(0.7);
+        }
+
+        .achievement-info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 5;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .achievement-info.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .achievement-info-title {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--accent);
+        }
+
+        .achievement-info-desc {
+            font-size: 9px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .achievement i {
+            font-size: 16px;
+            color: var(--accent);
+            margin-bottom: 2px;
+        }
+
+        .achievement-name {
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .market-items, .inventory-items, .quests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .quest-item {
+            background: rgba(120, 120, 128, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quest-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .quest-reward {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .quest-description {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .quest-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .quest-progress-bar {
+            height: 4px;
+            background: rgba(120, 120, 128, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .quest-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #4CD964);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .quest-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-light);
+        }
+
+        .quest-claim-btn {
+            background: var(--accent);
+            color: var(--text);
+            border: none;
+            padding: 6px 10px;
+            border-radius: var(--radius);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 4px;
+        }
+
+        .quest-claim-btn:disabled {
+            background: rgba(120, 120, 128, 0.3);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .quest-claim-btn:not(:disabled):hover {
+            transform: scale(1.05);
+        }
+
+        .empty-message {
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .nav-panel {
+            background: rgba(28, 28, 30, 0.95);
+            border-radius: var(--radius-lg);
+            padding: 4px 2px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            min-height: 45px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 5px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+            min-width: 45px;
+            flex: 1;
+            max-width: 60px;
+        }
+
+        .nav-item.active {
+            background: rgba(120, 120, 128, 0.3);
+            color: var(--text);
+        }
+
+        .nav-icon {
+            font-size: 14px;
+            margin-bottom: 0;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+        }
+
+        .nav-label {
+            font-size: 9px;
+            margin-top: 2px;
+        }
+
+        .level-progress-view {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .level-progress-view.active {
+            display: flex;
+        }
+
+        .level-progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .level-progress-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .level-progress-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .level-progress-close:hover {
+            background: rgba(120, 120, 128, 0.3);
+            color: var(--text);
+        }
+
+        .level-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(120, 120, 128, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 6px 0;
+            position: relative;
+        }
+
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #4CD964);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .level-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 20px 20px;
+            animation: energyShine 2s linear infinite;
+        }
+
+        .level-progress-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .level-progress-current {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .level-progress-next {
+            font-weight: 600;
+        }
+
+        .level-progress-percent {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 4px 0;
+        }
+
+        .profile-normal {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-normal.hidden {
+            display: none;
+        }
+
+        .upgrade-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .upgrade-modal.active {
+            display: flex;
+        }
+
+        .upgrade-content {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 15px;
+            width: 90%;
+            max-width: 350px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+        }
+
+        .upgrade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .upgrade-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .upgrade-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upgrade-close:hover {
+            background: rgba(120, 120, 128, 0.3);
+            color: var(--text);
+        }
+
+        .upgrade-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .upgrade-tab {
+            flex: 1;
+            padding: 6px 8px;
+            background: rgba(120, 120, 128, 0.2);
+            border: none;
+            border-radius: var(--radius);
+            color: var(--text-light);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upgrade-tab.active {
+            background: var(--primary);
+            color: var(--text);
+        }
+
+        .upgrade-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .upgrade-item {
+            background: rgba(120, 120, 128, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .upgrade-item.disabled {
+            opacity: 0.5;
+            filter: grayscale(0.7);
+        }
+
+        .upgrade-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upgrade-item-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .upgrade-item-level {
+            font-size: 11px;
+            color: var(--text-light);
+            background: rgba(120, 120, 128, 0.3);
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        .upgrade-item-desc {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .upgrade-item-cost {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upgrade-cost-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .upgrade-buy-btn {
+            background: var(--accent);
+            color: var(--text);
+            border: none;
+            padding: 5px 10px;
+            border-radius: var(--radius);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upgrade-buy-btn:disabled {
+            background: rgba(120, 120, 128, 0.3);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .upgrade-buy-btn:not(:disabled):hover {
+            transform: scale(1.05);
+        }
+
+        .referral-section {
+            margin-top: 12px;
+        }
+
+        .referral-code {
+            background: rgba(120, 120, 128, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .referral-code-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .referral-code-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px;
+            border-radius: var(--radius);
+            letter-spacing: 1px;
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .referral-stat {
+            background: rgba(120, 120, 128, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .referral-stat-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .referral-stat-label {
+            font-size: 9px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes energyShine {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 20px; }
+        }
+
+        @keyframes tapEffect {
+            0% {
+                opacity: 1;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        @keyframes coinDeform {
+            0% { 
+                transform: scale(1);
+                border-radius: 50%;
+            }
+            50% { 
+                transform: scale(0.92);
+                border-radius: 45% 55% 48% 52% / 52% 48% 52% 48%;
+            }
+            100% { 
+                transform: scale(1);
+                border-radius: 50%;
+            }
+        }
+
+        .coin.clicked {
+            animation: coinDeform 0.3s ease;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        .energy-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            display: none;
+            font-size: 12px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .energy-notification.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .scrollable {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .scrollable::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollable::-webkit-scrollbar-track {
+            background: rgba(120, 120, 128, 0.1);
+            border-radius: 2px;
+        }
+
+        .scrollable::-webkit-scrollbar-thumb {
+            background: rgba(120, 120, 128, 0.3);
+            border-radius: 2px;
+        }
+
+        .scrollable::-webkit-scrollbar-thumb:hover {
+            background: rgba(120, 120, 128, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="balance-container">
+                <div class="balance" id="balanceBtn">
+                    <span class="energy-value" id="energyValue">500</span>
+                    <span>⚡</span>
+                </div>
+                <div class="energy-container" id="energyContainer">
+                    <div class="energy-header">
+                        <div class="energy-title">
+                            <i class="fas fa-bolt energy-icon"></i>
+                            <span data-lang="energy">Energy</span>
+                        </div>
+                        <div class="energy-value-large" id="energyValueLarge">500/500</div>
+                    </div>
+                    <div class="energy-progress">
+                        <div class="energy-fill" id="energyFill"></div>
+                    </div>
+                    <div class="energy-stats">
+                        <span id="energyPercentage">100%</span>
+                        <span id="energyRecovery" data-lang="energyRecovery">+1 every 30s</span>
+                    </div>
+                    <div class="energy-info" data-lang="energyRequired">
+                        Energy is required to tap the coin
+                    </div>
+                </div>
+            </div>
+            
+            <div class="logo">
+                <img src="https://i.ibb.co/0jLvRK3W/IMG-6874.png" alt="MemTap">
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section active" id="main">
+                <div class="coin-container">
+                    <div class="coin" id="coin"></div>
+                    <div class="coin-value">0</div>
+                    <div class="energy-cost" data-lang="energyCost">-1 energy per tap</div>
+                    <button class="upgrade-btn" id="upgradeBtn">
+                        <i class="fas fa-arrow-up"></i>
+                        <span data-lang="upgrade">Upgrade</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="section" id="profile">
+                <div class="profile-header">
+                    <div class="avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-name">Alex</div>
+                    <div class="user-level" id="userLevel">
+                        <span data-lang="novice">Новичок</span>
+                    </div>
+                    <button class="language-btn" id="languageBtn">
+                        <i class="fas fa-globe"></i>
+                        <span id="currentLang">RU</span>
+                    </button>
+                </div>
+                
+                <div class="profile-normal" id="profileNormal">
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="profileCoins">0</div>
+                            <div class="stat-label" data-lang="coins">Coins</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalTaps">0</div>
+                            <div class="stat-label" data-lang="totalTaps">Total Taps</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="tapsToNext">10.000</div>
+                            <div class="stat-label" data-lang="toNextLevel">To Next Level</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="levelProgress">0%</div>
+                            <div class="stat-label" data-lang="progress">Progress</div>
+                        </div>
+                    </div>
+                    
+                    <div class="referral-section">
+                        <div class="section-title">
+                            <i class="fas fa-users"></i>
+                            <span data-lang="referrals">Referrals</span>
+                        </div>
+                        <div class="referral-code">
+                            <div class="referral-code-title" data-lang="yourReferralCode">Your referral code:</div>
+                            <div class="referral-code-value" id="referralCode">MEMTAP123</div>
+                        </div>
+                        <div class="referral-stats">
+                            <div class="referral-stat">
+                                <div class="referral-stat-value" id="referralCount">0</div>
+                                <div class="referral-stat-label" data-lang="referrals">Referrals</div>
+                            </div>
+                            <div class="referral-stat">
+                                <div class="referral-stat-value" id="referralBonus">0</div>
+                                <div class="referral-stat-label" data-lang="bonus">Bonus</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">
+                        <i class="fas fa-trophy"></i>
+                        <span data-lang="achievements">Achievements</span>
+                    </div>
+                    <div class="achievements">
+                        <div class="achievement locked" id="firstTapAchievement">
+                            <i class="fas fa-award"></i>
+                            <div class="achievement-name" data-lang="firstTap">First Tap</div>
+                            <div class="achievement-info" id="firstTapInfo">
+                                <div class="achievement-info-title" data-lang="firstTap">First Tap</div>
+                                <div class="achievement-info-desc" data-lang="firstTapDesc">Make your first tap</div>
+                            </div>
+                        </div>
+                        <div class="achievement locked" id="coinCollectorAchievement">
+                            <i class="fas fa-medal"></i>
+                            <div class="achievement-name" data-lang="coinCollector">Coin Collector</div>
+                            <div class="achievement-info" id="coinCollectorInfo">
+                                <div class="achievement-info-title" data-lang="coinCollector">Coin Collector</div>
+                                <div class="achievement-info-desc" data-lang="coinCollectorDesc">Reach level 10</div>
+                            </div>
+                        </div>
+                        <div class="achievement locked" id="tapMasterAchievement">
+                            <i class="fas fa-crown"></i>
+                            <div class="achievement-name" data-lang="tapMaster">Tap Master</div>
+                            <div class="achievement-info" id="tapMasterInfo">
+                                <div class="achievement-info-title" data-lang="tapMaster">Tap Master</div>
+                                <div class="achievement-info-desc" data-lang="tapMasterDesc">Reach level 100</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="level-progress-view" id="levelProgressView">
+                    <div class="level-progress-header">
+                        <div class="level-progress-title" data-lang="levelProgress">Level Progress</div>
+                        <button class="level-progress-close" id="levelProgressClose">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="level-progress-bar">
+                        <div class="level-progress-fill" id="levelProgressFill"></div>
+                    </div>
+                    <div class="level-progress-info">
+                        <span class="level-progress-current" id="levelProgressCurrent">0</span>
+                        <span class="level-progress-next" id="levelProgressNext">10.000</span>
+                    </div>
+                    <div class="level-progress-percent" id="levelProgressPercent">0%</div>
+                    <div class="energy-info" id="nextLevelInfo">
+                        Next level: <span data-lang="advanced">Продвинутый</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" id="market">
+                <div class="section-title">
+                    <i class="fas fa-store"></i>
+                    <span data-lang="market">Market</span>
+                </div>
+                <div class="market-items scrollable">
+                    <div class="empty-message" data-lang="comingSoon">Coming soon...</div>
+                </div>
+            </div>
+            
+            <div class="section" id="inventory">
+                <div class="section-title">
+                    <i class="fas fa-box"></i>
+                    <span data-lang="inventory">Inventory</span>
+                </div>
+                <div class="inventory-items scrollable">
+                    <div class="empty-message" data-lang="inventoryEmpty">Your inventory is empty</div>
+                </div>
+            </div>
+            
+            <div class="section" id="quests">
+                <div class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    <span data-lang="quests">Quests</span>
+                </div>
+                <div class="quests-list scrollable" id="questsList">
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-panel">
+            <div class="nav-item active" data-target="main">
+                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                <div class="nav-label" data-lang="main">Main</div>
+            </div>
+            <div class="nav-item" data-target="profile">
+                <div class="nav-icon"><i class="fas fa-user"></i></div>
+                <div class="nav-label" data-lang="profile">Profile</div>
+            </div>
+            <div class="nav-item" data-target="quests">
+                <div class="nav-icon"><i class="fas fa-tasks"></i></div>
+                <div class="nav-label" data-lang="quests">Quests</div>
+            </div>
+            <div class="nav-item" data-target="market">
+                <div class="nav-icon"><i class="fas fa-store"></i></div>
+                <div class="nav-label" data-lang="market">Market</div>
+            </div>
+            <div class="nav-item" data-target="inventory">
+                <div class="nav-icon"><i class="fas fa-box"></i></div>
+                <div class="nav-label" data-lang="inventory">Inventory</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="upgrade-modal" id="upgradeModal">
+        <div class="upgrade-content">
+            <div class="upgrade-header">
+                <div class="upgrade-title" data-lang="upgrades">Upgrades</div>
+                <button class="upgrade-close" id="upgradeClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="upgrade-tabs">
+                <button class="upgrade-tab active" data-tab="tap">Tap</button>
+                <button class="upgrade-tab" data-tab="energy">Energy</button>
+                <button class="upgrade-tab" data-tab="auto">Auto</button>
+            </div>
+            
+            <div class="upgrade-list" id="upgradeList">
+                <div class="upgrade-item" data-upgrade="tap1">
+                    <div class="upgrade-item-header">
+                        <div class="upgrade-item-name">+1 Tap</div>
+                        <div class="upgrade-item-level">Level 1</div>
+                    </div>
+                    <div class="upgrade-item-desc">Increase taps per click by 1</div>
+                    <div class="upgrade-item-cost">
+                        <div class="upgrade-cost-value">
+                            <i class="fas fa-coins"></i>
+                            <span>30.000</span>
+                        </div>
+                        <button class="upgrade-buy-btn" data-lang="buy">Buy</button>
+                    </div>
+                </div>
+                
+                <div class="upgrade-item disabled" data-upgrade="tap2">
+                    <div class="upgrade-item-header">
+                        <div class="upgrade-item-name">+1 Tap</div>
+                        <div class="upgrade-item-level">Level 2</div>
+                    </div>
+                    <div class="upgrade-item-desc">Increase taps per click by 1</div>
+                    <div class="upgrade-item-cost">
+                        <div class="upgrade-cost-value">
+                            <i class="fas fa-coins"></i>
+                            <span>70.000</span>
+                        </div>
+                        <button class="upgrade-buy-btn" disabled data-lang="buy">Buy</button>
+                    </div>
+                </div>
+                
+                <div class="upgrade-item disabled" data-upgrade="tap3">
+                    <div class="upgrade-item-header">
+                        <div class="upgrade-item-name">+1 Tap</div>
+                        <div class="upgrade-item-level">Level 3</div>
+                    </div>
+                    <div class="upgrade-item-desc">Increase taps per click by 1</div>
+                    <div class="upgrade-item-cost">
+                        <div class="upgrade-cost-value">
+                            <i class="fas fa-coins"></i>
+                            <span>150.000</span>
+                        </div>
+                        <button class="upgrade-buy-btn" disabled data-lang="buy">Buy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="energy-notification" id="energyNotification" data-lang="notEnoughEnergy">
+        Not enough energy!
+    </div>
+
+    <script>
+        let tg = window.Telegram?.WebApp;
+        
+        if (tg) {
+            tg.expand();
+            tg.enableClosingConfirmation();
+            
+            const themeParams = tg.themeParams;
+            if (themeParams) {
+                document.documentElement.style.setProperty('--primary', themeParams.button_color || '#007AFF');
+                document.documentElement.style.setProperty('--background', themeParams.bg_color || '#000000');
+                document.documentElement.style.setProperty('--text', themeParams.text_color || '#FFFFFF');
+            }
+            
+            tg.setHeaderColor('#000000');
+            tg.setBackgroundColor('#000000');
+            
+            const user = tg.initDataUnsafe?.user;
+            if (user) {
+                document.querySelector('.user-name').textContent = user.first_name || 'User';
+                if (user.photo_url) {
+                    document.querySelector('.avatar').innerHTML = `<img src="${user.photo_url}" style="width:100%;height:100%;border-radius:50%;">`;
+                }
+            }
+            
+            tg.BackButton.onClick(() => {
+                if (document.getElementById('levelProgressView').classList.contains('active')) {
+                    hideLevelProgress();
+                } else if (document.getElementById('upgradeModal').classList.contains('active')) {
+                    hideUpgradeModal();
+                } else {
+                    tg.close();
+                }
+            });
+        }
+
+        const translations = {
+            ru: {
+                energy: "Энергия",
+                energyRecovery: "+1 каждые 30с",
+                energyRequired: "Энергия требуется для нажатия на монету",
+                energyCost: "-1 энергия за нажатие",
+                coins: "Монеты",
+                totalTaps: "Всего нажатий",
+                toNextLevel: "До след. уровня",
+                progress: "Прогресс",
+                levelProgress: "Прогресс уровня",
+                achievements: "Достижения",
+                market: "Магазин",
+                inventory: "Инвентарь",
+                comingSoon: "Скоро...",
+                inventoryEmpty: "Ваш инвентарь пуст",
+                notEnoughEnergy: "Недостаточно энергии!",
+                firstTap: "Первое нажатие",
+                firstTapDesc: "Сделайте первое нажатие",
+                coinCollector: "Коллекционер",
+                coinCollectorDesc: "Достигните 10 уровня",
+                tapMaster: "Мастер нажатий",
+                tapMasterDesc: "Достигните 100 уровня",
+                novice: "Новичок",
+                advanced: "Продвинутый",
+                upgrade: "Улучшить",
+                upgrades: "Улучшения",
+                buy: "Купить",
+                referrals: "Рефералы",
+                yourReferralCode: "Ваш реферальный код:",
+                bonus: "Бонус",
+                tap: "Тапы",
+                energy: "Энергия",
+                auto: "Авто",
+                main: "Главная",
+                profile: "Профиль",
+                quests: "Задания"
+            },
+            en: {
+                energy: "Energy",
+                energyRecovery: "+1 every 30s",
+                energyRequired: "Energy is required to tap the coin",
+                energyCost: "-1 energy per tap",
+                coins: "Coins",
+                totalTaps: "Total Taps",
+                toNextLevel: "To Next Level",
+                progress: "Progress",
+                levelProgress: "Level Progress",
+                achievements: "Achievements",
+                market: "Market",
+                inventory: "Inventory",
+                comingSoon: "Coming soon...",
+                inventoryEmpty: "Your inventory is empty",
+                notEnoughEnergy: "Not enough energy!",
+                firstTap: "First Tap",
+                firstTapDesc: "Make your first tap",
+                coinCollector: "Coin Collector",
+                coinCollectorDesc: "Reach level 10",
+                tapMaster: "Tap Master",
+                tapMasterDesc: "Reach level 100",
+                novice: "Novice",
+                advanced: "Advanced",
+                upgrade: "Upgrade",
+                upgrades: "Upgrades",
+                buy: "Buy",
+                referrals: "Referrals",
+                yourReferralCode: "Your referral code:",
+                bonus: "Bonus",
+                tap: "Tap",
+                energy: "Energy",
+                auto: "Auto",
+                main: "Main",
+                profile: "Profile",
+                quests: "Quests"
+            }
+        };
+
+        let currentLanguage = 'ru';
+        
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+            
+            document.querySelectorAll('[data-lang]').forEach(element => {
+                const key = element.getAttribute('data-lang');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            updateLevelNames();
+        }
+        
+        function updateLevelNames() {
+            const levelNames = {
+                ru: ["Новичок", "Продвинутый", "Любитель", "Фанат", "Гой", "Партнер", "Менеджер", "Холдер", "Глава", "CEO"],
+                en: ["Novice", "Advanced", "Amateur", "Fan", "Goy", "Partner", "Manager", "Holder", "Head", "CEO"]
+            };
+            
+            if (currentLevel < levelNames[currentLanguage].length) {
+                document.querySelector('.user-level span[data-lang="novice"]').textContent = levelNames[currentLanguage][currentLevel];
+                
+                if (currentLevel < levelNames[currentLanguage].length - 1) {
+                    document.querySelector('#nextLevelInfo span[data-lang="advanced"]').textContent = levelNames[currentLanguage][currentLevel + 1];
+                }
+            }
+        }
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 10;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 60 + 15;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        const levels = [
+            { name: "Новичок", energy: 500, energyCost: 1, energyRecovery: 1, nextLevelTaps: 10000 },
+            { name: "Продвинутый", energy: 1000, energyCost: 1, energyRecovery: 2, nextLevelTaps: 40000 },
+            { name: "Любитель", energy: 3000, energyCost: 1, energyRecovery: 3, nextLevelTaps: 100000 },
+            { name: "Фанат", energy: 5000, energyCost: 1, energyRecovery: 10, nextLevelTaps: 300000 },
+            { name: "Гой", energy: 8000, energyCost: 1, energyRecovery: 15, nextLevelTaps: 700000 },
+            { name: "Партнер", energy: 12000, energyCost: 1, energyRecovery: 30, nextLevelTaps: 1500000 },
+            { name: "Менеджер", energy: 15000, energyCost: 1, energyRecovery: 45, nextLevelTaps: 4000000 },
+            { name: "Холдер", energy: 25000, energyCost: 1, energyRecovery: 60, nextLevelTaps: 10000000 },
+            { name: "Глава", energy: 50000, energyCost: 1, energyRecovery: 120, nextLevelTaps: 50000000 },
+            { name: "CEO", energy: 100000, energyCost: 1, energyRecovery: 200, nextLevelTaps: 0 }
+        ];
+
+        const tapUpgrades = [
+            { cost: 30000, level: 1, tapsPerClick: 1 },
+            { cost: 70000, level: 2, tapsPerClick: 1 },
+            { cost: 150000, level: 3, tapsPerClick: 1 },
+            { cost: 300000, level: 4, tapsPerClick: 1 },
+            { cost: 700000, level: 5, tapsPerClick: 1 },
+            { cost: 1500000, level: 6, tapsPerClick: 1 },
+            { cost: 3000000, level: 7, tapsPerClick: 1 }
+        ];
+
+        const quests = [
+            {
+                id: 1,
+                name: "First Steps",
+                description: "Make 100 taps",
+                type: "taps",
+                target: 100,
+                reward: 1000,
+                claimed: false
+            },
+            {
+                id: 2,
+                name: "Coin Collector",
+                description: "Collect 5000 coins",
+                type: "coins",
+                target: 5000,
+                reward: 2000,
+                claimed: false
+            },
+            {
+                id: 3,
+                name: "Energy Master",
+                description: "Reach maximum energy 10 times",
+                type: "energy",
+                target: 10,
+                reward: 1500,
+                claimed: false
+            },
+            {
+                id: 4,
+                name: "Tap Pro",
+                description: "Make 1000 taps",
+                type: "taps",
+                target: 1000,
+                reward: 5000,
+                claimed: false
+            },
+            {
+                id: 5,
+                name: "Rich Player",
+                description: "Collect 25000 coins",
+                type: "coins",
+                target: 25000,
+                reward: 10000,
+                claimed: false
+            }
+        ];
+
+        let coins = 0;
+        let currentLevel = 0;
+        let energy = levels[currentLevel].energy;
+        let maxEnergy = levels[currentLevel].energy;
+        const energyCostPerTap = levels[currentLevel].energyCost;
+        let energyRecoveryInterval;
+        let totalTaps = 0;
+        let tapsToNextLevel = levels[currentLevel].nextLevelTaps;
+        let tapsPerClick = 1;
+        let currentTapUpgrade = 0;
+        let questProgress = {
+            taps: 0,
+            coins: 0,
+            energy: 0
+        };
+        
+        const coin = document.getElementById('coin');
+        const coinValueElements = document.querySelectorAll('.coin-value');
+        const profileCoins = document.getElementById('profileCoins');
+        const balanceBtn = document.getElementById('balanceBtn');
+        const energyContainer = document.getElementById('energyContainer');
+        const energyValue = document.getElementById('energyValue');
+        const energyValueLarge = document.getElementById('energyValueLarge');
+        const energyFill = document.getElementById('energyFill');
+        const energyPercentage = document.getElementById('energyPercentage');
+        const energyRecoveryText = document.getElementById('energyRecovery');
+        const energyNotification = document.getElementById('energyNotification');
+        const userLevel = document.getElementById('userLevel');
+        const totalTapsElement = document.getElementById('totalTaps');
+        const tapsToNextElement = document.getElementById('tapsToNext');
+        const levelProgressElement = document.getElementById('levelProgress');
+        const upgradeBtn = document.getElementById('upgradeBtn');
+        const upgradeModal = document.getElementById('upgradeModal');
+        const upgradeClose = document.getElementById('upgradeClose');
+        const upgradeTabs = document.querySelectorAll('.upgrade-tab');
+        const questsList = document.getElementById('questsList');
+        
+        const profileNormal = document.getElementById('profileNormal');
+        const levelProgressView = document.getElementById('levelProgressView');
+        const levelProgressClose = document.getElementById('levelProgressClose');
+        const levelProgressFill = document.getElementById('levelProgressFill');
+        const levelProgressCurrent = document.getElementById('levelProgressCurrent');
+        const levelProgressNext = document.getElementById('levelProgressNext');
+        const levelProgressPercent = document.getElementById('levelProgressPercent');
+        
+        const referralCode = document.getElementById('referralCode');
+        const referralCount = document.getElementById('referralCount');
+        const referralBonus = document.getElementById('referralBonus');
+        
+        const firstTapAchievement = document.getElementById('firstTapAchievement');
+        const coinCollectorAchievement = document.getElementById('coinCollectorAchievement');
+        const tapMasterAchievement = document.getElementById('tapMasterAchievement');
+        const firstTapInfo = document.getElementById('firstTapInfo');
+        const coinCollectorInfo = document.getElementById('coinCollectorInfo');
+        const tapMasterInfo = document.getElementById('tapMasterInfo');
+        
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+        
+        function updateLevel() {
+            const levelData = levels[currentLevel];
+            
+            updateLevelNames();
+            
+            const progress = levelData.nextLevelTaps > 0 ? Math.min(100, (totalTaps / levelData.nextLevelTaps) * 100) : 100;
+            
+            levelProgressFill.style.width = `${progress}%`;
+            levelProgressCurrent.textContent = formatNumber(totalTaps);
+            levelProgressNext.textContent = formatNumber(levelData.nextLevelTaps);
+            levelProgressPercent.textContent = `${Math.floor(progress)}%`;
+            levelProgressElement.textContent = `${Math.floor(progress)}%`;
+            tapsToNextElement.textContent = formatNumber(levelData.nextLevelTaps - totalTaps);
+            
+            const nextLevelName = currentLevel < levels.length - 1 ? 
+                (currentLanguage === 'ru' ? levels[currentLevel + 1].name : 
+                 ["Novice", "Advanced", "Amateur", "Fan", "Goy", "Partner", "Manager", "Holder", "Head", "CEO"][currentLevel + 1]) : 
+                "MAX LEVEL";
+            document.querySelector('#nextLevelInfo').innerHTML = `Next level: <span data-lang="advanced">${nextLevelName}</span>`;
+            
+            updateAchievements();
+        }
+        
+        function updateAchievements() {
+            if (totalTaps >= 1) {
+                firstTapAchievement.classList.remove('locked');
+                firstTapAchievement.style.background = 'rgba(52, 199, 89, 0.3)';
+                firstTapAchievement.style.border = '1px solid rgba(52, 199, 89, 0.5)';
+            }
+            
+            if (currentLevel >= 10) {
+                coinCollectorAchievement.classList.remove('locked');
+                coinCollectorAchievement.style.background = 'rgba(52, 199, 89, 0.3)';
+                coinCollectorAchievement.style.border = '1px solid rgba(52, 199, 89, 0.5)';
+            }
+            
+            if (currentLevel >= 100) {
+                tapMasterAchievement.classList.remove('locked');
+                tapMasterAchievement.style.background = 'rgba(52, 199, 89, 0.3)';
+                tapMasterAchievement.style.border = '1px solid rgba(52, 199, 89, 0.5)';
+            }
+        }
+        
+        function updateEnergyDisplay() {
+            const energyPercentageValue = (energy / maxEnergy) * 100;
+            energyValue.textContent = energy;
+            energyValueLarge.textContent = `${energy}/${maxEnergy}`;
+            energyPercentage.textContent = `${Math.floor(energyPercentageValue)}%`;
+            energyFill.style.width = `${energyPercentageValue}%`;
+            energyRecoveryText.textContent = `+${levels[currentLevel].energyRecovery} every 30s`;
+            
+            if (energyPercentageValue <= 20) {
+                energyFill.style.background = 'linear-gradient(90deg, var(--energy-empty), #FF6961)';
+                energyValue.style.color = 'var(--energy-empty)';
+                energyValueLarge.style.color = 'var(--energy-empty)';
+            } else if (energyPercentageValue <= 50) {
+                energyFill.style.background = 'linear-gradient(90deg, var(--energy-low), #FFB347)';
+                energyValue.style.color = 'var(--energy-low)';
+                energyValueLarge.style.color = 'var(--energy-low)';
+            } else {
+                energyFill.style.background = 'linear-gradient(90deg, var(--energy), #4CD964)';
+                energyValue.style.color = 'var(--energy)';
+                energyValueLarge.style.color = 'var(--energy)';
+            }
+        }
+        
+        function startEnergyRecovery() {
+            if (energyRecoveryInterval) clearInterval(energyRecoveryInterval);
+            
+            energyRecoveryInterval = setInterval(() => {
+                if (energy < maxEnergy) {
+                    energy += levels[currentLevel].energyRecovery;
+                    if (energy > maxEnergy) energy = maxEnergy;
+                    updateEnergyDisplay();
+                }
+            }, 30000);
+        }
+        
+        function checkLevelUp() {
+            if (currentLevel < levels.length - 1 && totalTaps >= levels[currentLevel].nextLevelTaps) {
+                currentLevel++;
+                maxEnergy = levels[currentLevel].energy;
+                energy = maxEnergy;
+                
+                updateEnergyDisplay();
+                updateLevel();
+                
+                const notification = document.createElement('div');
+                notification.className = 'energy-notification';
+                notification.textContent = `Congratulations! You reached level: ${currentLanguage === 'ru' ? levels[currentLevel].name : 
+                    ["Novice", "Advanced", "Amateur", "Fan", "Goy", "Partner", "Manager", "Holder", "Head", "CEO"][currentLevel]}`;
+                document.body.appendChild(notification);
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+        }
+        
+        function createTapEffect(x, y) {
+            const effect = document.createElement('div');
+            effect.className = 'tap-effect';
+            effect.style.left = `${x - 25}px`;
+            effect.style.top = `${y - 25}px`;
+            effect.style.animation = 'tapEffect 0.5s ease-out forwards';
+            
+            document.querySelector('.coin-container').appendChild(effect);
+            
+            setTimeout(() => {
+                effect.remove();
+            }, 500);
+        }
+        
+        function showLevelProgress() {
+            profileNormal.classList.add('hidden');
+            levelProgressView.classList.add('active');
+            if (tg) {
+                tg.BackButton.show();
+            }
+        }
+        
+        function hideLevelProgress() {
+            profileNormal.classList.remove('hidden');
+            levelProgressView.classList.remove('active');
+            if (tg) {
+                tg.BackButton.hide();
+            }
+        }
+        
+        function showUpgradeModal() {
+            upgradeModal.classList.add('active');
+            if (tg) {
+                tg.BackButton.show();
+            }
+        }
+        
+        function hideUpgradeModal() {
+            upgradeModal.classList.remove('active');
+            if (tg) {
+                tg.BackButton.hide();
+            }
+        }
+        
+        function updateUpgradeItems() {
+            const upgradeItems = document.querySelectorAll('.upgrade-item');
+            upgradeItems.forEach((item, index) => {
+                if (index < currentTapUpgrade) {
+                    item.classList.remove('disabled');
+                    const btn = item.querySelector('.upgrade-buy-btn');
+                    btn.disabled = true;
+                    btn.textContent = currentLanguage === 'ru' ? 'Куплено' : 'Purchased';
+                } else if (index === currentTapUpgrade) {
+                    item.classList.remove('disabled');
+                    const btn = item.querySelector('.upgrade-buy-btn');
+                    const cost = tapUpgrades[index].cost;
+                    btn.disabled = coins < cost;
+                } else {
+                    item.classList.add('disabled');
+                    const btn = item.querySelector('.upgrade-buy-btn');
+                    btn.disabled = true;
+                }
+            });
+        }
+        
+        function buyUpgrade(upgradeIndex) {
+            const upgrade = tapUpgrades[upgradeIndex];
+            if (coins >= upgrade.cost && currentTapUpgrade === upgradeIndex) {
+                coins -= upgrade.cost;
+                tapsPerClick += upgrade.tapsPerClick;
+                currentTapUpgrade++;
+                
+                updateUpgradeItems();
+                updateCoinsDisplay();
+                
+                const notification = document.createElement('div');
+                notification.className = 'energy-notification';
+                notification.style.background = 'rgba(52, 199, 89, 0.9)';
+                notification.textContent = currentLanguage === 'ru' ? 
+                    `Улучшение куплено! Теперь +${tapsPerClick} за клик` : 
+                    `Upgrade purchased! Now +${tapsPerClick} per tap`;
+                document.body.appendChild(notification);
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 2000);
+            }
+        }
+        
+        function updateCoinsDisplay() {
+            coinValueElements.forEach(coinValue => {
+                coinValue.textContent = coins.toLocaleString();
+            });
+            profileCoins.textContent = coins.toLocaleString();
+        }
+        
+        function updateQuests() {
+            questProgress.taps = totalTaps;
+            questProgress.coins = coins;
+            
+            questsList.innerHTML = '';
+            
+            quests.forEach(quest => {
+                let progress = 0;
+                let current = 0;
+                
+                if (quest.type === 'taps') {
+                    current = questProgress.taps;
+                } else if (quest.type === 'coins') {
+                    current = questProgress.coins;
+                } else if (quest.type === 'energy') {
+                    current = questProgress.energy;
+                }
+                
+                progress = Math.min(100, (current / quest.target) * 100);
+                
+                const questElement = document.createElement('div');
+                questElement.className = 'quest-item';
+                questElement.innerHTML = `
+                    <div class="quest-header">
+                        <div class="quest-name">${quest.name}</div>
+                        <div class="quest-reward">
+                            <i class="fas fa-coins"></i>
+                            <span>${quest.reward}</span>
+                        </div>
+                    </div>
+                    <div class="quest-description">${quest.description}</div>
+                    <div class="quest-progress">
+                        <div class="quest-progress-bar">
+                            <div class="quest-progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="quest-progress-text">
+                            <span>${current}/${quest.target}</span>
+                            <span>${Math.floor(progress)}%</span>
+                        </div>
+                    </div>
+                    <button class="quest-claim-btn" ${quest.claimed || progress < 100 ? 'disabled' : ''}>
+                        ${quest.claimed ? (currentLanguage === 'ru' ? 'Получено' : 'Claimed') : 
+                          (progress < 100 ? (currentLanguage === 'ru' ? 'Выполняется' : 'In Progress') : 
+                          (currentLanguage === 'ru' ? 'Получить' : 'Claim'))}
+                    </button>
+                `;
+                
+                const claimBtn = questElement.querySelector('.quest-claim-btn');
+                if (!quest.claimed && progress >= 100) {
+                    claimBtn.addEventListener('click', () => {
+                        claimQuest(quest.id);
+                    });
+                }
+                
+                questsList.appendChild(questElement);
+            });
+        }
+        
+        function claimQuest(questId) {
+            const quest = quests.find(q => q.id === questId);
+            if (quest && !quest.claimed) {
+                quest.claimed = true;
+                coins += quest.reward;
+                updateCoinsDisplay();
+                updateQuests();
+                
+                const notification = document.createElement('div');
+                notification.className = 'energy-notification';
+                notification.style.background = 'rgba(52, 199, 89, 0.9)';
+                notification.textContent = currentLanguage === 'ru' ? 
+                    `Задание выполнено! +${quest.reward} монет` : 
+                    `Quest completed! +${quest.reward} coins`;
+                document.body.appendChild(notification);
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 2000);
+            }
+        }
+        
+        document.getElementById('languageBtn').addEventListener('click', function() {
+            currentLanguage = currentLanguage === 'ru' ? 'en' : 'ru';
+            changeLanguage(currentLanguage);
+        });
+        
+        userLevel.addEventListener('click', function() {
+            showLevelProgress();
+        });
+        
+        levelProgressClose.addEventListener('click', function() {
+            hideLevelProgress();
+        });
+        
+        upgradeBtn.addEventListener('click', function() {
+            showUpgradeModal();
+        });
+        
+        upgradeClose.addEventListener('click', function() {
+            hideUpgradeModal();
+        });
+        
+        upgradeTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                upgradeTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('upgrade-buy-btn') && !e.target.disabled) {
+                const upgradeItem = e.target.closest('.upgrade-item');
+                const upgradeId = upgradeItem.dataset.upgrade;
+                const upgradeIndex = parseInt(upgradeId.replace('tap', '')) - 1;
+                buyUpgrade(upgradeIndex);
+            }
+        });
+        
+        balanceBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            energyContainer.classList.toggle('show');
+        });
+        
+        firstTapAchievement.addEventListener('click', function(e) {
+            e.stopPropagation();
+            firstTapInfo.classList.toggle('show');
+        });
+        
+        coinCollectorAchievement.addEventListener('click', function(e) {
+            e.stopPropagation();
+            coinCollectorInfo.classList.toggle('show');
+        });
+        
+        tapMasterAchievement.addEventListener('click', function(e) {
+            e.stopPropagation();
+            tapMasterInfo.classList.toggle('show');
+        });
+        
+        coin.addEventListener('click', function(e) {
+            if (energy >= energyCostPerTap) {
+                energy -= energyCostPerTap;
+                updateEnergyDisplay();
+                
+                this.classList.add('clicked');
+                setTimeout(() => {
+                    this.classList.remove('clicked');
+                }, 300);
+                
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                createTapEffect(x, y);
+                
+                coins += tapsPerClick;
+                totalTaps += tapsPerClick;
+                
+                checkLevelUp();
+                
+                updateCoinsDisplay();
+                totalTapsElement.textContent = formatNumber(totalTaps);
+                updateLevel();
+                updateQuests();
+                
+                if (!energyRecoveryInterval) {
+                    startEnergyRecovery();
+                }
+            } else {
+                energyNotification.classList.add('show');
+                setTimeout(() => {
+                    energyNotification.classList.remove('show');
+                }, 2000);
+            }
+        });
+        
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.section');
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                
+                navItems.forEach(i => i.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                this.classList.add('active');
+                
+                document.getElementById(targetId).classList.add('active');
+                
+                hideLevelProgress();
+                hideUpgradeModal();
+            });
+        });
+        
+        document.addEventListener('click', function() {
+            energyContainer.classList.remove('show');
+            firstTapInfo.classList.remove('show');
+            coinCollectorInfo.classList.remove('show');
+            tapMasterInfo.classList.remove('show');
+        });
+        
+        setInterval(() => {
+            coin.classList.add('pulse');
+            setTimeout(() => {
+                coin.classList.remove('pulse');
+            }, 2000);
+        }, 5000);
+        
+        function generateReferralCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        referralCode.textContent = generateReferralCode();
+        
+        updateEnergyDisplay();
+        updateLevel();
+        updateUpgradeItems();
+        updateQuests();
+        startEnergyRecovery();
+        createParticles();
+        changeLanguage(currentLanguage);
+    </script>
+</body>
+</html>
