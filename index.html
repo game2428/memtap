@@ -44,7 +44,8 @@
         }
 
         body {
-            background: linear-gradient(135deg, #000000 0%, #1C1C1E 50%, #2C2C2E 100%);
+            background: url('https://i.ibb.co/rGhMqrdr/image.png') no-repeat center center fixed;
+            background-size: cover;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -109,20 +110,6 @@
             margin-bottom: 6px;
             position: relative;
             min-height: 36px;
-        }
-
-        .logo {
-            height: 26px;
-            display: flex;
-            align-items: center;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .logo img {
-            height: 100%;
-            object-fit: contain;
-            max-width: 100%;
         }
 
         .balance-container {
@@ -983,66 +970,6 @@
             transform: scale(1.05);
         }
 
-        .referral-section {
-            margin-top: 12px;
-        }
-
-        .referral-code {
-            background: rgba(120, 120, 128, 0.2);
-            border-radius: var(--radius-lg);
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .referral-code-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .referral-code-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--accent);
-            text-align: center;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 6px;
-            border-radius: var(--radius);
-            letter-spacing: 1px;
-        }
-
-        .referral-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-        }
-
-        .referral-stat {
-            background: rgba(120, 120, 128, 0.2);
-            border-radius: var(--radius-lg);
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .referral-stat-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .referral-stat-label {
-            font-size: 9px;
-            color: var(--text-light);
-            text-align: center;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -1050,7 +977,7 @@
 
         @keyframes energyShine {
             0% { background-position: 0 0; }
-            100% { background-position: 20px 20px; }
+            100% { background-position: 20px 20px;
         }
 
         @keyframes tapEffect {
@@ -1142,6 +1069,12 @@
         .scrollable::-webkit-scrollbar-thumb:hover {
             background: rgba(120, 120, 128, 0.5);
         }
+
+        .profile-content {
+            overflow-y: auto;
+            max-height: calc(100vh - 150px);
+            padding-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1149,7 +1082,7 @@
     
     <div class="container">
         <div class="header">
-            <div class="balance-container">
+            <div class="balance-container" id="balanceContainer">
                 <div class="balance" id="balanceBtn">
                     <span class="energy-value" id="energyValue">500</span>
                     <span>⚡</span>
@@ -1174,10 +1107,6 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="logo">
-                <img src="https://i.ibb.co/0jLvRK3W/IMG-6874.png" alt="MemTap">
-            </div>
         </div>
 
         <div class="content">
@@ -1194,110 +1123,91 @@
             </div>
             
             <div class="section" id="profile">
-                <div class="profile-header">
-                    <div class="avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-name">Alex</div>
-                    <div class="user-level" id="userLevel">
-                        <span data-lang="novice">Новичок</span>
-                    </div>
-                    <button class="language-btn" id="languageBtn">
-                        <i class="fas fa-globe"></i>
-                        <span id="currentLang">RU</span>
-                    </button>
-                </div>
-                
-                <div class="profile-normal" id="profileNormal">
-                    <div class="stats">
-                        <div class="stat-card">
-                            <div class="stat-value" id="profileCoins">0</div>
-                            <div class="stat-label" data-lang="coins">Coins</div>
+                <div class="profile-content">
+                    <div class="profile-header">
+                        <div class="avatar">
+                            <i class="fas fa-user"></i>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="totalTaps">0</div>
-                            <div class="stat-label" data-lang="totalTaps">Total Taps</div>
+                        <div class="user-name">Alex</div>
+                        <div class="user-level" id="userLevel">
+                            <span data-lang="novice">Новичок</span>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="tapsToNext">10.000</div>
-                            <div class="stat-label" data-lang="toNextLevel">To Next Level</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="levelProgress">0%</div>
-                            <div class="stat-label" data-lang="progress">Progress</div>
-                        </div>
-                    </div>
-                    
-                    <div class="referral-section">
-                        <div class="section-title">
-                            <i class="fas fa-users"></i>
-                            <span data-lang="referrals">Referrals</span>
-                        </div>
-                        <div class="referral-code">
-                            <div class="referral-code-title" data-lang="yourReferralCode">Your referral code:</div>
-                            <div class="referral-code-value" id="referralCode">MEMTAP123</div>
-                        </div>
-                        <div class="referral-stats">
-                            <div class="referral-stat">
-                                <div class="referral-stat-value" id="referralCount">0</div>
-                                <div class="referral-stat-label" data-lang="referrals">Referrals</div>
-                            </div>
-                            <div class="referral-stat">
-                                <div class="referral-stat-value" id="referralBonus">0</div>
-                                <div class="referral-stat-label" data-lang="bonus">Bonus</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="section-title">
-                        <i class="fas fa-trophy"></i>
-                        <span data-lang="achievements">Achievements</span>
-                    </div>
-                    <div class="achievements">
-                        <div class="achievement locked" id="firstTapAchievement">
-                            <i class="fas fa-award"></i>
-                            <div class="achievement-name" data-lang="firstTap">First Tap</div>
-                            <div class="achievement-info" id="firstTapInfo">
-                                <div class="achievement-info-title" data-lang="firstTap">First Tap</div>
-                                <div class="achievement-info-desc" data-lang="firstTapDesc">Make your first tap</div>
-                            </div>
-                        </div>
-                        <div class="achievement locked" id="coinCollectorAchievement">
-                            <i class="fas fa-medal"></i>
-                            <div class="achievement-name" data-lang="coinCollector">Coin Collector</div>
-                            <div class="achievement-info" id="coinCollectorInfo">
-                                <div class="achievement-info-title" data-lang="coinCollector">Coin Collector</div>
-                                <div class="achievement-info-desc" data-lang="coinCollectorDesc">Reach level 10</div>
-                            </div>
-                        </div>
-                        <div class="achievement locked" id="tapMasterAchievement">
-                            <i class="fas fa-crown"></i>
-                            <div class="achievement-name" data-lang="tapMaster">Tap Master</div>
-                            <div class="achievement-info" id="tapMasterInfo">
-                                <div class="achievement-info-title" data-lang="tapMaster">Tap Master</div>
-                                <div class="achievement-info-desc" data-lang="tapMasterDesc">Reach level 100</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="level-progress-view" id="levelProgressView">
-                    <div class="level-progress-header">
-                        <div class="level-progress-title" data-lang="levelProgress">Level Progress</div>
-                        <button class="level-progress-close" id="levelProgressClose">
-                            <i class="fas fa-times"></i>
+                        <button class="language-btn" id="languageBtn">
+                            <i class="fas fa-globe"></i>
+                            <span id="currentLang">RU</span>
                         </button>
                     </div>
-                    <div class="level-progress-bar">
-                        <div class="level-progress-fill" id="levelProgressFill"></div>
+                    
+                    <div class="profile-normal" id="profileNormal">
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-value" id="profileCoins">0</div>
+                                <div class="stat-label" data-lang="coins">Coins</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalTaps">0</div>
+                                <div class="stat-label" data-lang="totalTaps">Total Taps</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="tapsToNext">10.000</div>
+                                <div class="stat-label" data-lang="toNextLevel">To Next Level</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="levelProgress">0%</div>
+                                <div class="stat-label" data-lang="progress">Progress</div>
+                            </div>
+                        </div>
+                        
+                        <div class="section-title">
+                            <i class="fas fa-trophy"></i>
+                            <span data-lang="achievements">Achievements</span>
+                        </div>
+                        <div class="achievements">
+                            <div class="achievement locked" id="firstTapAchievement">
+                                <i class="fas fa-award"></i>
+                                <div class="achievement-name" data-lang="firstTap">First Tap</div>
+                                <div class="achievement-info" id="firstTapInfo">
+                                    <div class="achievement-info-title" data-lang="firstTap">First Tap</div>
+                                    <div class="achievement-info-desc" data-lang="firstTapDesc">Make your first tap</div>
+                                </div>
+                            </div>
+                            <div class="achievement locked" id="coinCollectorAchievement">
+                                <i class="fas fa-medal"></i>
+                                <div class="achievement-name" data-lang="coinCollector">Coin Collector</div>
+                                <div class="achievement-info" id="coinCollectorInfo">
+                                    <div class="achievement-info-title" data-lang="coinCollector">Coin Collector</div>
+                                    <div class="achievement-info-desc" data-lang="coinCollectorDesc">Reach level 10</div>
+                                </div>
+                            </div>
+                            <div class="achievement locked" id="tapMasterAchievement">
+                                <i class="fas fa-crown"></i>
+                                <div class="achievement-name" data-lang="tapMaster">Tap Master</div>
+                                <div class="achievement-info" id="tapMasterInfo">
+                                    <div class="achievement-info-title" data-lang="tapMaster">Tap Master</div>
+                                    <div class="achievement-info-desc" data-lang="tapMasterDesc">Reach level 100</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="level-progress-info">
-                        <span class="level-progress-current" id="levelProgressCurrent">0</span>
-                        <span class="level-progress-next" id="levelProgressNext">10.000</span>
-                    </div>
-                    <div class="level-progress-percent" id="levelProgressPercent">0%</div>
-                    <div class="energy-info" id="nextLevelInfo">
-                        Next level: <span data-lang="advanced">Продвинутый</span>
+                    
+                    <div class="level-progress-view" id="levelProgressView">
+                        <div class="level-progress-header">
+                            <div class="level-progress-title" data-lang="levelProgress">Level Progress</div>
+                            <button class="level-progress-close" id="levelProgressClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="level-progress-bar">
+                            <div class="level-progress-fill" id="levelProgressFill"></div>
+                        </div>
+                        <div class="level-progress-info">
+                            <span class="level-progress-current" id="levelProgressCurrent">0</span>
+                            <span class="level-progress-next" id="levelProgressNext">10.000</span>
+                        </div>
+                        <div class="level-progress-percent" id="levelProgressPercent">0%</div>
+                        <div class="energy-info" id="nextLevelInfo">
+                            Next level: <span data-lang="advanced">Продвинутый</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1488,9 +1398,6 @@
                 upgrade: "Улучшить",
                 upgrades: "Улучшения",
                 buy: "Купить",
-                referrals: "Рефералы",
-                yourReferralCode: "Ваш реферальный код:",
-                bonus: "Бонус",
                 tap: "Тапы",
                 energy: "Энергия",
                 auto: "Авто",
@@ -1525,9 +1432,6 @@
                 upgrade: "Upgrade",
                 upgrades: "Upgrades",
                 buy: "Buy",
-                referrals: "Referrals",
-                yourReferralCode: "Your referral code:",
-                bonus: "Bonus",
                 tap: "Tap",
                 energy: "Energy",
                 auto: "Auto",
@@ -1679,6 +1583,7 @@
         const coinValueElements = document.querySelectorAll('.coin-value');
         const profileCoins = document.getElementById('profileCoins');
         const balanceBtn = document.getElementById('balanceBtn');
+        const balanceContainer = document.getElementById('balanceContainer');
         const energyContainer = document.getElementById('energyContainer');
         const energyValue = document.getElementById('energyValue');
         const energyValueLarge = document.getElementById('energyValueLarge');
@@ -1703,10 +1608,6 @@
         const levelProgressCurrent = document.getElementById('levelProgressCurrent');
         const levelProgressNext = document.getElementById('levelProgressNext');
         const levelProgressPercent = document.getElementById('levelProgressPercent');
-        
-        const referralCode = document.getElementById('referralCode');
-        const referralCount = document.getElementById('referralCount');
-        const referralBonus = document.getElementById('referralBonus');
         
         const firstTapAchievement = document.getElementById('firstTapAchievement');
         const coinCollectorAchievement = document.getElementById('coinCollectorAchievement');
@@ -2011,6 +1912,15 @@
             }
         }
         
+        function toggleBalanceVisibility() {
+            const activeSection = document.querySelector('.section.active');
+            if (activeSection && activeSection.id === 'main') {
+                balanceContainer.style.display = 'block';
+            } else {
+                balanceContainer.style.display = 'none';
+            }
+        }
+        
         document.getElementById('languageBtn').addEventListener('click', function() {
             currentLanguage = currentLanguage === 'ru' ? 'en' : 'ru';
             changeLanguage(currentLanguage);
@@ -2120,6 +2030,7 @@
                 
                 hideLevelProgress();
                 hideUpgradeModal();
+                toggleBalanceVisibility();
             });
         });
         
@@ -2137,17 +2048,6 @@
             }, 2000);
         }, 5000);
         
-        function generateReferralCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-            for (let i = 0; i < 8; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-        
-        referralCode.textContent = generateReferralCode();
-        
         updateEnergyDisplay();
         updateLevel();
         updateUpgradeItems();
@@ -2155,6 +2055,7 @@
         startEnergyRecovery();
         createParticles();
         changeLanguage(currentLanguage);
+        toggleBalanceVisibility();
     </script>
 </body>
 </html>
