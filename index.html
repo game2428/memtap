@@ -224,11 +224,12 @@
             align-items: center;
             padding: 6px;
             position: relative;
+            gap: 8px;
         }
 
         .coin {
-            width: 130px;
-            height: 130px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -237,7 +238,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            background: url('https://i.ibb.co/CKqNQTjf/IMG-6920.png') center/cover no-repeat;
+            background: url('https://i.ibb.co/n8N2wzC7/moneta-ai.png') center/cover no-repeat;
             box-shadow: 
                 0 0 0 4px rgba(255, 215, 0, 0.15),
                 0 4px 15px rgba(0, 0, 0, 0.4),
@@ -246,6 +247,7 @@
             touch-action: manipulation;
             transform-style: preserve-3d;
             perspective: 1000px;
+            animation: coinPulse 2s infinite;
         }
 
         .tap-effect {
@@ -260,16 +262,14 @@
         }
 
         .coin-value {
-            margin-top: 8px;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--text);
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .energy-cost {
-            margin-top: 4px;
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-light);
         }
 
@@ -277,7 +277,7 @@
             background: linear-gradient(135deg, var(--secondary), var(--primary));
             color: var(--text);
             border: none;
-            padding: 8px 12px;
+            padding: 10px 16px;
             border-radius: var(--radius-lg);
             font-weight: 700;
             cursor: pointer;
@@ -285,9 +285,8 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 4px;
-            margin-top: 10px;
-            font-size: 12px;
+            gap: 6px;
+            font-size: 14px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -306,43 +305,43 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             position: relative;
-            padding-top: 4px;
+            padding-top: 8px;
         }
 
         .avatar {
-            width: 45px;
-            height: 45px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 4px;
-            font-size: 18px;
+            margin-bottom: 8px;
+            font-size: 24px;
             color: var(--text);
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 8px rgba(52, 199, 89, 0.4);
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 12px rgba(52, 199, 89, 0.4);
         }
 
         .user-name {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .user-level {
             color: var(--text-light);
-            font-size: 11px;
+            font-size: 14px;
             background: rgba(120, 120, 128, 0.2);
-            padding: 4px 8px;
+            padding: 6px 12px;
             border-radius: var(--radius-lg);
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-weight: 600;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -352,32 +351,32 @@
             background: rgba(120, 120, 128, 0.2);
             color: var(--text);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 4px 6px;
+            padding: 6px 10px;
             border-radius: var(--radius-lg);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             transition: all 0.3s ease;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 600;
             box-shadow: var(--shadow);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .stat-card {
             background: rgba(120, 120, 128, 0.2);
             border-radius: var(--radius-lg);
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -388,25 +387,25 @@
         }
 
         .stat-value {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--accent);
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 9px;
+            font-size: 11px;
             color: var(--text-light);
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             color: var(--text);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
         .section-title i {
@@ -416,14 +415,14 @@
         .achievements {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            margin-bottom: 5px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
 
         .achievement {
             background: rgba(120, 120, 128, 0.2);
             border-radius: var(--radius-lg);
-            padding: 8px 4px;
+            padding: 10px 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -432,7 +431,7 @@
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
-            min-height: 60px;
+            min-height: 70px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
         }
@@ -450,7 +449,7 @@
             bottom: 0;
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            padding: 6px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -469,26 +468,26 @@
         }
 
         .achievement-info-title {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             color: var(--accent);
         }
 
         .achievement-info-desc {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--text-light);
             text-align: center;
         }
 
         .achievement i {
-            font-size: 16px;
+            font-size: 18px;
             color: var(--accent);
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .achievement-name {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
         }
 
@@ -504,10 +503,10 @@
         .quest-item {
             background: rgba(120, 120, 128, 0.2);
             border-radius: var(--radius-lg);
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -520,29 +519,29 @@
         }
 
         .quest-name {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text);
         }
 
         .quest-reward {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--accent);
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
 
         .quest-description {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-light);
         }
 
         .quest-progress {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
 
         .quest-progress-bar {
@@ -562,7 +561,7 @@
         .quest-progress-text {
             display: flex;
             justify-content: space-between;
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-light);
         }
 
@@ -570,13 +569,13 @@
             background: var(--accent);
             color: var(--text);
             border: none;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: var(--radius);
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .quest-claim-btn:disabled {
@@ -590,7 +589,7 @@
         }
 
         .empty-message {
-            font-size: 12px;
+            font-size: 14px;
             color: var(--text-light);
             text-align: center;
             padding: 20px;
@@ -599,28 +598,28 @@
         .nav-panel {
             background: rgba(28, 28, 30, 0.95);
             border-radius: var(--radius-lg);
-            padding: 4px 2px;
+            padding: 6px 4px;
             display: flex;
             justify-content: space-around;
             box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            min-height: 45px;
+            min-height: 50px;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 4px 5px;
+            padding: 6px 8px;
             border-radius: var(--radius-lg);
             cursor: pointer;
             transition: all 0.3s ease;
             color: var(--text-light);
-            min-width: 45px;
+            min-width: 50px;
             flex: 1;
-            max-width: 60px;
+            max-width: 65px;
         }
 
         .nav-item.active {
@@ -629,13 +628,13 @@
         }
 
         .nav-icon {
-            font-size: 14px;
+            font-size: 16px;
             margin-bottom: 0;
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
         }
 
         .nav-label {
-            font-size: 9px;
+            font-size: 10px;
             margin-top: 2px;
         }
 
@@ -644,10 +643,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 12px;
+            padding: 15px;
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            margin-top: 8px;
+            margin-top: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
         }
@@ -661,11 +660,11 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .level-progress-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--accent);
         }
@@ -674,11 +673,11 @@
             background: none;
             border: none;
             color: var(--text-light);
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -696,7 +695,7 @@
             background: rgba(120, 120, 128, 0.3);
             border-radius: 4px;
             overflow: hidden;
-            margin: 6px 0;
+            margin: 8px 0;
             position: relative;
         }
 
@@ -733,9 +732,9 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-light);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .level-progress-current {
@@ -749,10 +748,10 @@
 
         .level-progress-percent {
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--accent);
-            margin: 4px 0;
+            margin: 6px 0;
         }
 
         .profile-normal {
@@ -785,7 +784,7 @@
         .upgrade-content {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            padding: 15px;
+            padding: 18px;
             width: 90%;
             max-width: 350px;
             max-height: 80vh;
@@ -799,11 +798,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .upgrade-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--accent);
         }
@@ -812,11 +811,11 @@
             background: none;
             border: none;
             color: var(--text-light);
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 26px;
-            height: 26px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -830,18 +829,18 @@
 
         .upgrade-tabs {
             display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .upgrade-tab {
             flex: 1;
-            padding: 6px 8px;
+            padding: 8px 10px;
             background: rgba(120, 120, 128, 0.2);
             border: none;
             border-radius: var(--radius);
             color: var(--text-light);
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -855,16 +854,16 @@
         .upgrade-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .upgrade-item {
             background: rgba(120, 120, 128, 0.2);
             border-radius: var(--radius-lg);
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
         }
@@ -881,21 +880,21 @@
         }
 
         .upgrade-item-name {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--text);
         }
 
         .upgrade-item-level {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-light);
             background: rgba(120, 120, 128, 0.3);
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 8px;
         }
 
         .upgrade-item-desc {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-light);
         }
 
@@ -906,21 +905,21 @@
         }
 
         .upgrade-cost-value {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--accent);
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
 
         .upgrade-buy-btn {
             background: var(--accent);
             color: var(--text);
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: var(--radius);
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -975,18 +974,32 @@
             }
         }
 
+        @keyframes coinPulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 
+                    0 0 0 4px rgba(255, 215, 0, 0.15),
+                    0 4px 15px rgba(0, 0, 0, 0.4),
+                    inset 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 
+                    0 0 0 6px rgba(255, 215, 0, 0.25),
+                    0 6px 20px rgba(0, 0, 0, 0.5),
+                    inset 0 0 15px rgba(255, 255, 255, 0.2);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 
+                    0 0 0 4px rgba(255, 215, 0, 0.15),
+                    0 4px 15px rgba(0, 0, 0, 0.4),
+                    inset 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+        }
+
         .coin.clicked {
             animation: coinDeform 0.3s ease;
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
         }
 
         .energy-notification {
@@ -996,13 +1009,13 @@
             transform: translate(-50%, -50%);
             background: rgba(255, 59, 48, 0.9);
             color: white;
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-radius: var(--radius-lg);
             font-weight: 600;
             box-shadow: var(--shadow);
             z-index: 100;
             display: none;
-            font-size: 12px;
+            font-size: 14px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1984,13 +1997,6 @@
             coinCollectorInfo.classList.remove('show');
             tapMasterInfo.classList.remove('show');
         });
-        
-        setInterval(() => {
-            coin.classList.add('pulse');
-            setTimeout(() => {
-                coin.classList.remove('pulse');
-            }, 2000);
-        }, 5000);
         
         updateEnergyDisplay();
         updateLevel();
