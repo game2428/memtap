@@ -224,12 +224,12 @@
             align-items: center;
             padding: 6px;
             position: relative;
-            gap: 8px;
+            gap: 15px;
         }
 
         .coin {
-            width: 160px;
-            height: 160px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -247,7 +247,6 @@
             touch-action: manipulation;
             transform-style: preserve-3d;
             perspective: 1000px;
-            animation: coinPulse 2s infinite;
         }
 
         .tap-effect {
@@ -261,15 +260,23 @@
             transform: scale(0);
         }
 
+        .coin-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
         .coin-value {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text);
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .energy-cost {
-            font-size: 12px;
+            font-size: 14px;
             color: var(--text-light);
         }
 
@@ -277,7 +284,7 @@
             background: linear-gradient(135deg, var(--secondary), var(--primary));
             color: var(--text);
             border: none;
-            padding: 10px 16px;
+            padding: 12px 20px;
             border-radius: var(--radius-lg);
             font-weight: 700;
             cursor: pointer;
@@ -285,11 +292,12 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 14px;
+            gap: 8px;
+            font-size: 16px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 10px;
         }
 
         .upgrade-btn:hover {
@@ -959,47 +967,20 @@
             }
         }
 
-        @keyframes coinDeform {
+        @keyframes coinPulseTap {
             0% { 
                 transform: scale(1);
-                border-radius: 50%;
             }
             50% { 
-                transform: scale(0.92);
-                border-radius: 45% 55% 48% 52% / 52% 48% 52% 48%;
+                transform: scale(0.95);
             }
             100% { 
                 transform: scale(1);
-                border-radius: 50%;
-            }
-        }
-
-        @keyframes coinPulse {
-            0% { 
-                transform: scale(1);
-                box-shadow: 
-                    0 0 0 4px rgba(255, 215, 0, 0.15),
-                    0 4px 15px rgba(0, 0, 0, 0.4),
-                    inset 0 0 10px rgba(255, 255, 255, 0.1);
-            }
-            50% { 
-                transform: scale(1.05);
-                box-shadow: 
-                    0 0 0 6px rgba(255, 215, 0, 0.25),
-                    0 6px 20px rgba(0, 0, 0, 0.5),
-                    inset 0 0 15px rgba(255, 255, 255, 0.2);
-            }
-            100% { 
-                transform: scale(1);
-                box-shadow: 
-                    0 0 0 4px rgba(255, 215, 0, 0.15),
-                    0 4px 15px rgba(0, 0, 0, 0.4),
-                    inset 0 0 10px rgba(255, 255, 255, 0.1);
             }
         }
 
         .coin.clicked {
-            animation: coinDeform 0.3s ease;
+            animation: coinPulseTap 0.3s ease;
         }
 
         .energy-notification {
@@ -1090,12 +1071,14 @@
             <div class="section active" id="main">
                 <div class="coin-container">
                     <div class="coin" id="coin"></div>
-                    <div class="coin-value">0</div>
-                    <div class="energy-cost" data-lang="energyCost">-1 energy per tap</div>
-                    <button class="upgrade-btn" id="upgradeBtn">
-                        <i class="fas fa-arrow-up"></i>
-                        <span data-lang="upgrade">Upgrade</span>
-                    </button>
+                    <div class="coin-stats">
+                        <div class="coin-value">0</div>
+                        <div class="energy-cost" data-lang="energyCost">-1 energy per tap</div>
+                        <button class="upgrade-btn" id="upgradeBtn">
+                            <i class="fas fa-arrow-up"></i>
+                            <span data-lang="upgrade">Upgrade</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             
